@@ -1,0 +1,1272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>College Management System</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background: #f4f6f9;
+            color: #333;
+        }
+
+        header {
+            background: #1f4e79;
+            color: white;
+            padding: 25px;
+            text-align: center;
+        }
+
+        header h1 {
+            margin-bottom: 6px;
+        }
+
+        header p {
+            font-size: 14px;
+        }
+
+        .container {
+            width: 92%;
+            max-width: 1200px;
+            margin: 25px auto;
+        }
+
+        .dashboard {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .card {
+            background: white;
+            padding: 22px;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .card:hover {
+            transform: translateY(-3px);
+            background: #eef5fb;
+        }
+
+        .card h2 {
+            color: #1f4e79;
+            margin-bottom: 8px;
+            font-size: 20px;
+        }
+
+        .card p {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .section {
+            background: white;
+            padding: 25px;
+            margin-bottom: 25px;
+            border-radius: 10px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+        }
+
+        .section h2 {
+            color: #1f4e79;
+            margin-bottom: 18px;
+        }
+
+        form {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+            gap: 12px;
+        }
+
+        input {
+            padding: 11px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+
+        button {
+            padding: 11px 16px;
+            border: none;
+            border-radius: 6px;
+            background: #1f4e79;
+            color: white;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        button:hover {
+            background: #163a5c;
+        }
+
+        .delete-btn {
+            background: #c0392b;
+        }
+
+        .delete-btn:hover {
+            background: #962d22;
+        }
+
+        .update-btn {
+            background: #2874a6;
+        }
+
+        .records {
+            margin-top: 18px;
+        }
+
+        .record {
+            background: #f7f9fb;
+            border-left: 5px solid #1f4e79;
+            padding: 15px;
+            margin-bottom: 12px;
+            border-radius: 5px;
+        }
+
+        .record strong {
+            color: #1f4e79;
+        }
+
+        .actions {
+            margin-top: 10px;
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .message {
+            margin-top: 12px;
+            font-weight: bold;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        footer {
+            background: #1f4e79;
+            color: white;
+            text-align: center;
+            padding: 15px;
+            margin-top: 30px;
+        }
+
+        .view-btn {
+            margin-top: 10px;
+        }
+    </style>
+</head>
+
+<body>
+
+<header>
+    <h1>College Management System</h1>
+    <p>Student Management Portal</p>
+</header>
+
+<div class="container">
+
+    <!-- DASHBOARD -->
+    <div class="dashboard">
+
+        <div class="card" onclick="showSection('studentsSection')">
+            <h2>Students</h2>
+            <p>Manage Students</p>
+        </div>
+
+        <div class="card" onclick="showSection('teachersSection')">
+            <h2>Teachers</h2>
+            <p>Manage Teachers</p>
+        </div>
+
+        <div class="card" onclick="showSection('coursesSection')">
+            <h2>Courses</h2>
+            <p>Manage Courses</p>
+        </div>
+
+        <div class="card" onclick="showSection('departmentsSection')">
+            <h2>Departments</h2>
+            <p>Manage Departments</p>
+        </div>
+
+        <div class="card" onclick="showSection('attendanceSection')">
+            <h2>Attendance</h2>
+            <p>Manage Attendance</p>
+        </div>
+
+        <div class="card" onclick="showSection('marksSection')">
+            <h2>Marks</h2>
+            <p>Manage Marks</p>
+        </div>
+
+    </div>
+
+
+    <!-- STUDENTS -->
+    <div class="section" id="studentsSection">
+
+        <h2>Student Management</h2>
+
+        <form id="studentForm">
+
+            <input type="text" id="studentName"
+                   placeholder="Student Name" required>
+
+            <input type="number" id="studentAge"
+                   placeholder="Age" required>
+
+            <input type="text" id="studentCourse"
+                   placeholder="Course" required>
+
+            <input type="text" id="studentDepartment"
+                   placeholder="Department" required>
+
+            <button type="submit">Add Student</button>
+
+        </form>
+
+        <p id="studentMessage" class="message"></p>
+
+        <button class="view-btn" onclick="loadStudents()">
+            View Students
+        </button>
+
+        <div id="studentsList" class="records"></div>
+
+    </div>
+
+
+    <!-- TEACHERS -->
+    <div class="section hidden" id="teachersSection">
+
+        <h2>Teacher Management</h2>
+
+        <form id="teacherForm">
+
+            <input type="text" id="teacherName"
+                   placeholder="Teacher Name" required>
+
+            <input type="text" id="teacherSubject"
+                   placeholder="Subject" required>
+
+            <input type="text" id="teacherDepartment"
+                   placeholder="Department" required>
+
+            <button type="submit">Add Teacher</button>
+
+        </form>
+
+        <p id="teacherMessage" class="message"></p>
+
+        <button class="view-btn" onclick="loadTeachers()">
+            View Teachers
+        </button>
+
+        <div id="teachersList" class="records"></div>
+
+    </div>
+
+
+    <!-- COURSES -->
+    <div class="section hidden" id="coursesSection">
+
+        <h2>Course Management</h2>
+
+        <form id="courseForm">
+
+            <input type="text" id="courseName"
+                   placeholder="Course Name" required>
+
+            <input type="text" id="courseCode"
+                   placeholder="Course Code" required>
+
+            <input type="text" id="courseDepartment"
+                   placeholder="Department" required>
+
+            <button type="submit">Add Course</button>
+
+        </form>
+
+        <p id="courseMessage" class="message"></p>
+
+        <button class="view-btn" onclick="loadCourses()">
+            View Courses
+        </button>
+
+        <div id="coursesList" class="records"></div>
+
+    </div>
+
+
+    <!-- DEPARTMENTS -->
+    <div class="section hidden" id="departmentsSection">
+
+        <h2>Department Management</h2>
+
+        <form id="departmentForm">
+
+            <input type="text" id="departmentName"
+                   placeholder="Department Name" required>
+
+            <input type="text" id="departmentCode"
+                   placeholder="Department Code" required>
+
+            <button type="submit">Add Department</button>
+
+        </form>
+
+        <p id="departmentMessage" class="message"></p>
+
+        <button class="view-btn" onclick="loadDepartments()">
+            View Departments
+        </button>
+
+        <div id="departmentsList" class="records"></div>
+
+    </div>
+
+
+    <!-- ATTENDANCE -->
+    <div class="section hidden" id="attendanceSection">
+
+        <h2>Attendance Management</h2>
+
+        <form id="attendanceForm">
+
+            <input type="number" id="attendanceStudentId"
+                   placeholder="Student ID" required>
+
+            <input type="text" id="attendanceDate"
+                   placeholder="Date" required>
+
+            <input type="text" id="attendanceStatus"
+                   placeholder="Status (Present/Absent)" required>
+
+            <button type="submit">Add Attendance</button>
+
+        </form>
+
+        <p id="attendanceMessage" class="message"></p>
+
+        <button class="view-btn" onclick="loadAttendance()">
+            View Attendance
+        </button>
+
+        <div id="attendanceList" class="records"></div>
+
+    </div>
+
+
+    <!-- MARKS -->
+    <div class="section hidden" id="marksSection">
+
+        <h2>Marks Management</h2>
+
+        <form id="marksForm">
+
+            <input type="number" id="marksStudentId"
+                   placeholder="Student ID" required>
+
+            <input type="text" id="marksSubject"
+                   placeholder="Subject" required>
+
+            <input type="number" id="marksValue"
+                   placeholder="Marks" required>
+
+            <button type="submit">Add Marks</button>
+
+        </form>
+
+        <p id="marksMessage" class="message"></p>
+
+        <button class="view-btn" onclick="loadMarks()">
+            View Marks
+        </button>
+
+        <div id="marksList" class="records"></div>
+
+    </div>
+
+</div>
+
+
+<footer>
+    <p>College Management System</p>
+</footer>
+
+
+<script>
+
+    // =========================
+    // SHOW SECTION
+    // =========================
+
+    function showSection(sectionId) {
+
+        const sections = document.querySelectorAll(".section");
+
+        sections.forEach(function(section) {
+            section.classList.add("hidden");
+        });
+
+        document.getElementById(sectionId).classList.remove("hidden");
+
+        window.scrollTo({
+            top: document.getElementById(sectionId).offsetTop - 20,
+            behavior: "smooth"
+        });
+    }
+
+
+    // =========================
+    // STUDENTS
+    // =========================
+
+    document.getElementById("studentForm").addEventListener(
+        "submit",
+        async function(event) {
+
+            event.preventDefault();
+
+            const student = {
+                name: document.getElementById("studentName").value,
+                age: parseInt(document.getElementById("studentAge").value),
+                course: document.getElementById("studentCourse").value,
+                department: document.getElementById("studentDepartment").value
+            };
+
+            try {
+
+                const response = await fetch("/students", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify(student)
+                });
+
+                if (response.ok) {
+
+                    document.getElementById("studentMessage").innerText =
+                        "Student added successfully!";
+
+                    document.getElementById("studentForm").reset();
+
+                    loadStudents();
+
+                } else {
+
+                    document.getElementById("studentMessage").innerText =
+                        "Failed to add student.";
+
+                }
+
+            } catch (error) {
+
+                document.getElementById("studentMessage").innerText =
+                    "Error connecting to server.";
+
+            }
+        }
+    );
+
+
+    async function loadStudents() {
+
+        try {
+
+            const response = await fetch("/students");
+            const students = await response.json();
+
+            const list = document.getElementById("studentsList");
+
+            list.innerHTML = "";
+
+            if (students.length === 0) {
+
+                list.innerHTML = "<p>No students found.</p>";
+                return;
+
+            }
+
+            students.forEach(function(student, index) {
+
+                const div = document.createElement("div");
+
+                div.className = "record";
+
+                div.innerHTML = `
+                    <strong>Student ID: ${student.student_id}</strong><br><br>
+Name: ${student.name}<br>
+Age: ${student.age}<br>
+Course: ${student.course}<br>
+Department: ${student.department}
+
+                    <div class="actions">
+
+                        <button class="update-btn"
+                            onclick="updateStudent(${index})">
+                            Update
+                        </button>
+
+                        <button class="delete-btn"
+                            onclick="deleteStudent(${index})">
+                            Delete
+                        </button>
+
+                    </div>
+                `;
+
+                list.appendChild(div);
+
+            });
+
+        } catch (error) {
+
+            document.getElementById("studentsList").innerHTML =
+                "<p>Unable to load students.</p>";
+
+        }
+    }
+
+
+    async function updateStudent(id) {
+
+        const name = prompt("Enter student name:");
+        if (name === null) return;
+
+        const age = prompt("Enter age:");
+        if (age === null) return;
+
+        const course = prompt("Enter course:");
+        if (course === null) return;
+
+        const department = prompt("Enter department:");
+        if (department === null) return;
+
+        const student = {
+            name: name,
+            age: parseInt(age),
+            course: course,
+            department: department
+        };
+
+        const response = await fetch(`/students/${id}`, {
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(student)
+        });
+
+        if (response.ok) {
+            alert("Student updated successfully!");
+            loadStudents();
+        } else {
+            alert("Failed to update student.");
+        }
+    }
+
+
+    async function deleteStudent(id) {
+
+        if (!confirm("Are you sure you want to delete this student?")) {
+            return;
+        }
+
+        const response = await fetch(`/students/${id}`, {
+            method: "DELETE"
+        });
+
+        if (response.ok) {
+            alert("Student deleted successfully!");
+            loadStudents();
+        } else {
+            alert("Failed to delete student.");
+        }
+    }
+
+
+    // =========================
+    // TEACHERS
+    // =========================
+
+    document.getElementById("teacherForm").addEventListener(
+        "submit",
+        async function(event) {
+
+            event.preventDefault();
+
+            const teacher = {
+                name: document.getElementById("teacherName").value,
+                subject: document.getElementById("teacherSubject").value,
+                department: document.getElementById("teacherDepartment").value
+            };
+
+            const response = await fetch("/teachers", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(teacher)
+            });
+
+            if (response.ok) {
+
+                document.getElementById("teacherMessage").innerText =
+                    "Teacher added successfully!";
+
+                document.getElementById("teacherForm").reset();
+
+                loadTeachers();
+
+            } else {
+
+                document.getElementById("teacherMessage").innerText =
+                    "Failed to add teacher.";
+
+            }
+        }
+    );
+
+
+    async function loadTeachers() {
+
+        const response = await fetch("/teachers");
+        const teachers = await response.json();
+
+        const list = document.getElementById("teachersList");
+
+        list.innerHTML = "";
+
+        if (teachers.length === 0) {
+            list.innerHTML = "<p>No teachers found.</p>";
+            return;
+        }
+
+        teachers.forEach(function(teacher, index) {
+
+            const div = document.createElement("div");
+
+            div.className = "record";
+
+            div.innerHTML = `
+                <strong>Teacher ${index + 1}</strong><br><br>
+
+                Name: ${teacher.name}<br>
+                Subject: ${teacher.subject}<br>
+                Department: ${teacher.department}
+
+                <div class="actions">
+
+                    <button class="update-btn"
+                        onclick="updateTeacher(${index})">
+                        Update
+                    </button>
+
+                    <button class="delete-btn"
+                        onclick="deleteTeacher(${index})">
+                        Delete
+                    </button>
+
+                </div>
+            `;
+
+            list.appendChild(div);
+
+        });
+    }
+
+
+    async function updateTeacher(id) {
+
+        const name = prompt("Enter teacher name:");
+        if (name === null) return;
+
+        const subject = prompt("Enter subject:");
+        if (subject === null) return;
+
+        const department = prompt("Enter department:");
+        if (department === null) return;
+
+        const teacher = {
+            name: name,
+            subject: subject,
+            department: department
+        };
+
+        const response = await fetch(`/teachers/${id}`, {
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(teacher)
+        });
+
+        if (response.ok) {
+            alert("Teacher updated successfully!");
+            loadTeachers();
+        } else {
+            alert("Failed to update teacher.");
+        }
+    }
+
+
+    async function deleteTeacher(id) {
+
+        if (!confirm("Delete this teacher?")) return;
+
+        const response = await fetch(`/teachers/${id}`, {
+            method: "DELETE"
+        });
+
+        if (response.ok) {
+            alert("Teacher deleted successfully!");
+            loadTeachers();
+        } else {
+            alert("Failed to delete teacher.");
+        }
+    }
+
+
+    // =========================
+    // COURSES
+    // =========================
+
+    document.getElementById("courseForm").addEventListener(
+        "submit",
+        async function(event) {
+
+            event.preventDefault();
+
+            const course = {
+                name: document.getElementById("courseName").value,
+                code: document.getElementById("courseCode").value,
+                department: document.getElementById("courseDepartment").value
+            };
+
+            const response = await fetch("/courses", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(course)
+            });
+
+            if (response.ok) {
+
+                document.getElementById("courseMessage").innerText =
+                    "Course added successfully!";
+
+                document.getElementById("courseForm").reset();
+
+                loadCourses();
+
+            } else {
+
+                document.getElementById("courseMessage").innerText =
+                    "Failed to add course.";
+
+            }
+        }
+    );
+
+
+    async function loadCourses() {
+
+        const response = await fetch("/courses");
+        const courses = await response.json();
+
+        const list = document.getElementById("coursesList");
+
+        list.innerHTML = "";
+
+        if (courses.length === 0) {
+            list.innerHTML = "<p>No courses found.</p>";
+            return;
+        }
+
+        courses.forEach(function(course, index) {
+
+            const div = document.createElement("div");
+
+            div.className = "record";
+
+            div.innerHTML = `
+                <strong>Course ${index + 1}</strong><br><br>
+
+                Name: ${course.name}<br>
+                Code: ${course.code}<br>
+                Department: ${course.department}
+
+                <div class="actions">
+
+                    <button class="update-btn"
+                        onclick="updateCourse(${index})">
+                        Update
+                    </button>
+
+                    <button class="delete-btn"
+                        onclick="deleteCourse(${index})">
+                        Delete
+                    </button>
+
+                </div>
+            `;
+
+            list.appendChild(div);
+
+        });
+    }
+
+
+    async function updateCourse(id) {
+
+        const name = prompt("Enter course name:");
+        if (name === null) return;
+
+        const code = prompt("Enter course code:");
+        if (code === null) return;
+
+        const department = prompt("Enter department:");
+        if (department === null) return;
+
+        const course = {
+            name: name,
+            code: code,
+            department: department
+        };
+
+        const response = await fetch(`/courses/${id}`, {
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(course)
+        });
+
+        if (response.ok) {
+            alert("Course updated successfully!");
+            loadCourses();
+        } else {
+            alert("Failed to update course.");
+        }
+    }
+
+
+    async function deleteCourse(id) {
+
+        if (!confirm("Delete this course?")) return;
+
+        const response = await fetch(`/courses/${id}`, {
+            method: "DELETE"
+        });
+
+        if (response.ok) {
+            alert("Course deleted successfully!");
+            loadCourses();
+        } else {
+            alert("Failed to delete course.");
+        }
+    }
+
+
+    // =========================
+    // DEPARTMENTS
+    // =========================
+
+    document.getElementById("departmentForm").addEventListener(
+        "submit",
+        async function(event) {
+
+            event.preventDefault();
+
+            const department = {
+                name: document.getElementById("departmentName").value,
+                code: document.getElementById("departmentCode").value
+            };
+
+            const response = await fetch("/departments", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(department)
+            });
+
+            if (response.ok) {
+
+                document.getElementById("departmentMessage").innerText =
+                    "Department added successfully!";
+
+                document.getElementById("departmentForm").reset();
+
+                loadDepartments();
+
+            } else {
+
+                document.getElementById("departmentMessage").innerText =
+                    "Failed to add department.";
+
+            }
+        }
+    );
+
+
+    async function loadDepartments() {
+
+        const response = await fetch("/departments");
+        const departments = await response.json();
+
+        const list = document.getElementById("departmentsList");
+
+        list.innerHTML = "";
+
+        if (departments.length === 0) {
+            list.innerHTML = "<p>No departments found.</p>";
+            return;
+        }
+
+        departments.forEach(function(department, index) {
+
+            const div = document.createElement("div");
+
+            div.className = "record";
+
+            div.innerHTML = `
+                <strong>Department ${index + 1}</strong><br><br>
+
+                Name: ${department.name}<br>
+                Code: ${department.code}
+
+                <div class="actions">
+
+                    <button class="update-btn"
+                        onclick="updateDepartment(${index})">
+                        Update
+                    </button>
+
+                    <button class="delete-btn"
+                        onclick="deleteDepartment(${index})">
+                        Delete
+                    </button>
+
+                </div>
+            `;
+
+            list.appendChild(div);
+
+        });
+    }
+
+
+    async function updateDepartment(id) {
+
+        const name = prompt("Enter department name:");
+        if (name === null) return;
+
+        const code = prompt("Enter department code:");
+        if (code === null) return;
+
+        const department = {
+            name: name,
+            code: code
+        };
+
+        const response = await fetch(`/departments/${id}`, {
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(department)
+        });
+
+        if (response.ok) {
+            alert("Department updated successfully!");
+            loadDepartments();
+        } else {
+            alert("Failed to update department.");
+        }
+    }
+
+
+    async function deleteDepartment(id) {
+
+        if (!confirm("Delete this department?")) return;
+
+        const response = await fetch(`/departments/${id}`, {
+            method: "DELETE"
+        });
+
+        if (response.ok) {
+            alert("Department deleted successfully!");
+            loadDepartments();
+        } else {
+            alert("Failed to delete department.");
+        }
+    }
+
+
+    // =========================
+    // ATTENDANCE
+    // =========================
+
+    document.getElementById("attendanceForm").addEventListener(
+        "submit",
+        async function(event) {
+
+            event.preventDefault();
+
+            const record = {
+                student_id: parseInt(
+                    document.getElementById("attendanceStudentId").value
+                ),
+                date: document.getElementById("attendanceDate").value,
+                status: document.getElementById("attendanceStatus").value
+            };
+
+            const response = await fetch("/attendance", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(record)
+            });
+
+            const result = await response.json();
+
+if (result.message === "Student ID does not exist") {
+
+    document.getElementById("attendanceMessage").innerText =
+        "Student ID does not exist.";
+
+} else {
+
+    document.getElementById("attendanceMessage").innerText =
+        "Attendance added successfully!";
+
+    document.getElementById("attendanceForm").reset();
+
+    loadAttendance();
+}
+        }
+    );
+
+
+    async function loadAttendance() {
+
+        const response = await fetch("/attendance");
+        const attendance = await response.json();
+
+        const list = document.getElementById("attendanceList");
+
+        list.innerHTML = "";
+
+        if (attendance.length === 0) {
+            list.innerHTML = "<p>No attendance records found.</p>";
+            return;
+        }
+
+        attendance.forEach(function(record, index) {
+
+            const div = document.createElement("div");
+
+            div.className = "record";
+
+            div.innerHTML = `
+                <strong>Attendance ${index + 1}</strong><br><br>
+
+                Student ID: ${record.student_id}<br>
+                Date: ${record.date}<br>
+                Status: ${record.status}
+
+                <div class="actions">
+
+                    <button class="update-btn"
+                        onclick="updateAttendance(${index})">
+                        Update
+                    </button>
+
+                </div>
+            `;
+
+            list.appendChild(div);
+
+        });
+    }
+
+
+    async function updateAttendance(id) {
+
+        const studentId = prompt("Enter student ID:");
+        if (studentId === null) return;
+
+        const date = prompt("Enter date:");
+        if (date === null) return;
+
+        const status = prompt("Enter status:");
+        if (status === null) return;
+
+        const record = {
+            student_id: parseInt(studentId),
+            date: date,
+            status: status
+        };
+
+        const response = await fetch(`/attendance/${id}`, {
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(record)
+        });
+
+        if (response.ok) {
+            alert("Attendance updated successfully!");
+            loadAttendance();
+        } else {
+            alert("Failed to update attendance.");
+        }
+    }
+
+
+    // =========================
+    // MARKS
+    // =========================
+
+    document.getElementById("marksForm").addEventListener(
+        "submit",
+        async function(event) {
+
+            event.preventDefault();
+
+            const record = {
+                student_id: parseInt(
+                    document.getElementById("marksStudentId").value
+                ),
+                subject: document.getElementById("marksSubject").value,
+                marks: parseInt(
+                    document.getElementById("marksValue").value
+                )
+            };
+
+            const response = await fetch("/marks", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(record)
+            });
+
+            if (response.ok) {
+
+                document.getElementById("marksMessage").innerText =
+                    "Marks added successfully!";
+
+                document.getElementById("marksForm").reset();
+
+                loadMarks();
+
+            } else {
+
+                document.getElementById("marksMessage").innerText =
+                    "Failed to add marks.";
+
+            }
+        }
+    );
+
+
+    async function loadMarks() {
+
+        const response = await fetch("/marks");
+        const marks = await response.json();
+
+        const list = document.getElementById("marksList");
+
+        list.innerHTML = "";
+
+        if (marks.length === 0) {
+            list.innerHTML = "<p>No marks records found.</p>";
+            return;
+        }
+
+        marks.forEach(function(record, index) {
+
+            const div = document.createElement("div");
+
+            div.className = "record";
+
+            div.innerHTML = `
+                <strong>Marks Record ${index + 1}</strong><br><br>
+
+                Student ID: ${record.student_id}<br>
+                Subject: ${record.subject}<br>
+                Marks: ${record.marks}
+
+                <div class="actions">
+
+                    <button class="update-btn"
+                        onclick="updateMarks(${index})">
+                        Update
+                    </button>
+
+                </div>
+            `;
+
+            list.appendChild(div);
+
+        });
+    }
+
+
+    async function updateMarks(id) {
+
+        const studentId = prompt("Enter student ID:");
+        if (studentId === null) return;
+
+        const subject = prompt("Enter subject:");
+        if (subject === null) return;
+
+        const marksValue = prompt("Enter marks:");
+        if (marksValue === null) return;
+
+        const record = {
+            student_id: parseInt(studentId),
+            subject: subject,
+            marks: parseInt(marksValue)
+        };
+
+        const response = await fetch(`/marks/${id}`, {
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(record)
+        });
+
+        if (response.ok) {
+            alert("Marks updated successfully!");
+            loadMarks();
+        } else {
+            alert("Failed to update marks.");
+        }
+    }
+
+</script>
+
+</body>
+</html>
