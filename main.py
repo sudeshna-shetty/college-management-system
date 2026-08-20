@@ -199,6 +199,10 @@ def delete_student(
         "message": "Student deleted successfully"
     }
 
+# =========================
+# TEACHERS
+# =========================
+
 class Teacher(BaseModel):
     teacher_id: int = 0
     name: str
@@ -209,56 +213,83 @@ class Teacher(BaseModel):
 teachers_collection = db["teachers"]
 
 
+# =========================
+# CREATE TEACHER
+# =========================
+
 @app.post("/teachers")
-def create_teacher(teacher: Teacher):
-    # Generate the next unique Teacher ID
+def create_teacher(
+    teacher: Teacher,
+    username: str = Header(...)
+):
+
+    # Generate the next Teacher ID for this user
     last_teacher = teachers_collection.find_one(
-        {},
+        {"username": username},
         sort=[("teacher_id", -1)]
     )
 
     if last_teacher:
-        teacher.teacher_id = last_teacher["teacher_id"] + 1
+        teacher.teacher_id = (
+            last_teacher["teacher_id"] + 1
+        )
     else:
         teacher.teacher_id = 1
 
-    teachers_collection.insert_one(teacher.model_dump())
+    teacher_data = teacher.model_dump()
+
+    # Connect this teacher record to the logged-in user
+    teacher_data["username"] = username
+
+    teachers_collection.insert_one(
+        teacher_data
+    )
 
     return teacher
 
 
+# =========================
+# VIEW TEACHERS
+# =========================
+
 @app.get("/teachers")
-def get_teachers():
+def get_teachers(
+    username: str = Header(...)
+):
+
     teachers = list(
-        teachers_collection.find().sort("teacher_id", 1)
+        teachers_collection.find(
+            {"username": username}
+        ).sort("teacher_id", 1)
     )
 
-    next_id = 1
-
-    for teacher in teachers:
-        # Give old teachers a Teacher ID if they don't have one
-        if "teacher_id" not in teacher:
-            teacher["teacher_id"] = next_id
-
-            teachers_collection.update_one(
-                {"_id": teacher["_id"]},
-                {"$set": {"teacher_id": next_id}}
-            )
-
-        next_id = max(next_id, teacher["teacher_id"] + 1)
-
-    # Hide MongoDB's internal _id
+    # Hide MongoDB internal ID and username
     for teacher in teachers:
         teacher.pop("_id", None)
+        teacher.pop("username", None)
 
     return teachers
 
 
+# =========================
+# GET ONE TEACHER
+# =========================
+
 @app.get("/teachers/{id}")
-def get_teacher(id: int):
+def get_teacher(
+    id: int,
+    username: str = Header(...)
+):
+
     teacher = teachers_collection.find_one(
-        {"teacher_id": id},
-        {"_id": 0}
+        {
+            "teacher_id": id,
+            "username": username
+        },
+        {
+            "_id": 0,
+            "username": 0
+        }
     )
 
     if not teacher:
@@ -270,16 +301,31 @@ def get_teacher(id: int):
     return teacher
 
 
+# =========================
+# UPDATE TEACHER
+# =========================
+
 @app.put("/teachers/{id}")
-def update_teacher(id: int, teacher: Teacher):
+def update_teacher(
+    id: int,
+    teacher: Teacher,
+    username: str = Header(...)
+):
+
+    updated_data = teacher.model_dump()
 
     # Keep the original Teacher ID
-    updated_data = teacher.model_dump()
     updated_data["teacher_id"] = id
+    updated_data["username"] = username
 
     result = teachers_collection.update_one(
-        {"teacher_id": id},
-        {"$set": updated_data}
+        {
+            "teacher_id": id,
+            "username": username
+        },
+        {
+            "$set": updated_data
+        }
     )
 
     if result.matched_count == 0:
@@ -288,14 +334,24 @@ def update_teacher(id: int, teacher: Teacher):
             detail="Teacher not found"
         )
 
-    return updated_data
+    return teacher
 
+
+# =========================
+# DELETE TEACHER
+# =========================
 
 @app.delete("/teachers/{id}")
-def delete_teacher(id: int):
+def delete_teacher(
+    id: int,
+    username: str = Header(...)
+):
 
     result = teachers_collection.delete_one(
-        {"teacher_id": id}
+        {
+            "teacher_id": id,
+            "username": username
+        }
     )
 
     if result.deleted_count == 0:
