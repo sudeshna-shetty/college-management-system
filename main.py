@@ -4,6 +4,10 @@ from pydantic import BaseModel
 from fastapi.responses import FileResponse
 from pymongo import MongoClient
 from fastapi.middleware.cors import CORSMiddleware
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
 
 app = FastAPI()
 app = FastAPI()
@@ -23,7 +27,7 @@ class UserLogin(BaseModel):
     password: str
 
 # MongoDB connection
-client = MongoClient("mongodb+srv://sudeshnashetty_db_user:68Vym45ZiCQLLz0g@cluster0.teg5rdn.mongodb.net/?appName=Cluster0")
+client = MongoClient(os.getenv("MONGODB_URL"))
 db = client["college_db"]
 print(client.admin.command("ping"))
 # =========================
